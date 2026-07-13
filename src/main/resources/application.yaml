@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: ForestmapJava
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: password
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+logging:
+  level:
+    dev.stefa.forestmap: debug
+    org.hibernate.sql: debug
+    org.geotools.data.wfs: debug
+    org.geotools.data.wfs.internal: debug
+
+ade:
+  max-features: 10
+  wfs:
+    base-url: https://wfs.cartografia.agenziaentrate.gov.it/inspire/wfs/owfs01.php
+#    base-url: https://wfs.cartografia.agenziaentrate.gov.it/inspire/wfs/owfs01.php?service=WFS&version=2.0.0&request=GetCapabilities
+
+cadastre:
+  inspire:
+    schema-dir:
