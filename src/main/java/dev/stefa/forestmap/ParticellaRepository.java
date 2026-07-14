@@ -1,61 +1,74 @@
 package dev.stefa.forestmap;
 
-import jakarta.transaction.Transactional;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import lombok.AllArgsConstructor;
+import org.geotools.geometry.jts.WKBReader;
+import org.jspecify.annotations.NullMarked;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKBWriter;
+import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
-public interface ParticellaRepository extends JpaRepository<Particella, Long> {
+@NullMarked
+@AllArgsConstructor
+public class ParticellaRepository {
+  private final JdbcClient db;
+  private static final WKBWriter WKB = new WKBWriter(2, true);
 
-  Optional<Particella> findByComuneAndFoglioAndNumero(String comune, String foglio, String numero);
-
-  /// Idempotent insert. ST_Multi normalises Polygon -> MultiPolygon so the column
-  /// type constraint never trips. Hibernate Spatial binds the JTS Geometry directly.
-  ///
-  /// Returns 1 if inserted, 0 if the (comune, foglio, numero) already exists.
-/*  @Modifying
   @Transactional
-  @Query(value = """
-      INSERT INTO particella (comune, foglio, numero, geom, ingested_at)
-      VALUES (:comune, :foglio, :numero, ST_Multi(:geom), NOW())
-      ON CONFLICT (comune, foglio, numero) DO NOTHING
-      """, nativeQuery = true)
-  int upsert(
-      @Param("comune") String comune,
-      @Param("foglio") String foglio,
-      @Param("numero") String numero,
-      @Param("geom") Geometry geom
-  );*/
-  @Modifying
-  @Transactional
-  @Query(value = """
-    INSERT INTO particella (comune, sezione, foglio, numero, geom, ingested_at)
-    VALUES (:comune, :sezione, :foglio, :numero, ST_Multi(ST_GeomFromEWKB(:geom)), NOW())
-    ON CONFLICT (comune, sezione, foglio, numero) DO NOTHING
-    """, nativeQuery = true)
-  int upsert(
-      @Param("comune") String comune,
-      @Param("sezione") String sezione,
-      @Param("foglio") String foglio,
-      @Param("numero") String numero,
-      @Param("geom") byte[] geom   // EWKB bytes, SRID embedded
-  );
+  public int upsert(CadastralReference ref, Geometry geom) {
+    byte[] geomEwkb = WKB.write(geom);
 
-  default int upsert(CadastralReference ref, byte[] geomEwkb) {
-    return upsert(ref.comune(), ref.sezione(), ref.foglio(), ref.numero(), geomEwkb);
+    return db.sql("""
+            INSERT INTO particella (comune, sezione, foglio, numero, geom, ingested_at)
+            VALUES (:comune, :sezione, :foglio, :numero, ST_Multi(ST_GeomFromEWKB(:geom)), NOW())
+            ON CONFLICT (comune, sezione, foglio, numero) DO NOTHING
+            """)
+        .param("comune", ref.comune())
+        .param("sezione", ref.sezione())
+        .param("foglio", ref.foglio())
+        .param("numero", ref.numero())
+        .param("geom", geomEwkb)
+        .update();
   }
 
-  // Viewport fetch. bbox in lon/lat, EPSG:4326.
-  @Query(value = """
-      SELECT * FROM particella
-      WHERE ST_Intersects(geom, ST_MakeEnvelope(:minLon, :minLat, :maxLon, :maxLat, 4326))
-      """, nativeQuery = true)
-  List<Particella> findWithinBbox(@Param("minLon") double minLon, @Param("minLat") double minLat,
-                                  @Param("maxLon") double maxLon, @Param("maxLat") double maxLat);
+  public List<Particella> findWithinBbox(double minLon, double minLat,
+                                         double maxLon, double maxLat) {
+    return db.sql("""
+            SELECT id, comune, sezione, foglio, numero, st_asbinary(geom) AS geom, ingested_at
+            FROM particella
+            WHERE st_intersects(geom, st_makeenvelope(:minLon, :minLat, :maxLon, :maxLat, 4326))
+            """)
+        .param("minLon", minLon).param("minLat", minLat)
+        .param("maxLon", maxLon).param("maxLat", maxLat)
+        .query(ParticellaRepository::mapRow)
+        .list();
+  }
+
+  public static Particella mapRow(ResultSet rs, int rowNum) throws SQLException {
+    Geometry geom;
+    try {
+      geom = new WKBReader().read(rs.getBytes("geom"));
+      geom.setSRID(4326);
+    } catch (ParseException e) {
+      throw new SQLException("Bad geometry in row " + rs.getLong("id"), e);
+    }
+
+    return new Particella(
+        rs.getLong("id"),
+        rs.getString("comune"),
+        rs.getString("sezione"),
+        rs.getString("foglio"),
+        rs.getString("numero"),
+        null,
+        geom,
+        rs.getObject("ingested_at", Instant.class));
+  }
 }
