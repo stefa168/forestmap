@@ -40,13 +40,13 @@ class IngestionServiceTest {
     int count = service.ingest(new BoundingBox(44, 8, 45, 9));
 
     assertThat(count).isEqualTo(3);
-    verify(repository, times(3)).upsert(any(), any(), any(), any(), any());
+    verify(repository, times(3)).upsert(any(), any());
     verify(client, times(1)).getFeatures(any()); // no subdivision
   }
 
   @Test
   void subdividesWhenResponseHitsCap() throws Exception {
-    when(client.maxFeatures()).thenReturn(2);
+    when(client.maxFeatures()).thenReturn(3);
     when(client.getFeatures(any())).thenReturn(emptyStream());
     when(parser.parse(any()))
         .thenReturn(List.of(parcel("1"), parcel("2"))) // root: full page -> truncated
@@ -59,11 +59,11 @@ class IngestionServiceTest {
 
     assertThat(count).isEqualTo(4);                  // only the leaf parcels are upserted
     verify(client, times(5)).getFeatures(any());     // 1 root + 4 quarters
-    verify(repository, times(4)).upsert(any(), any(), any(), any(), any());
+    verify(repository, times(4)).upsert(any(), any());
   }
 
   private static ParsedParcel parcel(String numero) {
-    return new ParsedParcel(new CadastralReference("H366", "2", numero, null),
+    return new ParsedParcel(new CadastralReference("H366", null, "2", numero),
         org.mockito.Mockito.mock(Geometry.class));
   }
 

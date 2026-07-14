@@ -2,7 +2,6 @@ package dev.stefa.forestmap;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.locationtech.jts.io.WKBWriter;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
@@ -20,8 +19,6 @@ public class IngestionService {
   private final AdeWfsClient client;
   private final GmlParser parser;
   private final ParticellaRepository repository;
-
-  private static final WKBWriter WKB = new WKBWriter(2, true);
 
   /**
    * Ingest one bounding box, subdividing on overflow. Returns the number of parcels seen.
@@ -44,24 +41,13 @@ public class IngestionService {
       return total;
     }
 
-    for (ParsedParcel parcel : parcels) {
-      // Matches your existing idempotent ParticellaRepository upsert
-      // (ON CONFLICT (comune, foglio, numero) DO NOTHING). Adjust the
-      // signature if yours differs.
-/*            repository.upsert(
-                    parcel.reference().comune(),
-                    parcel.reference().foglio(),
-                    parcel.reference().numero(),
-                    parcel.geometry());*/
-      repository.upsert(parcel.reference(), WKB.write(parcel.geometry()));
-    }
+    parcels.forEach(p -> repository.upsert(p.reference(), p.geometry()));
+
     log.info("bbox {} -> {} parcels upserted", box, parcels.size());
     return parcels.size();
   }
 
-  /**
-   * Thrown when a bbox cannot be fetched or parsed.
-   */
+  /// Thrown when a bbox cannot be fetched or parsed.
   public static class IngestionException extends RuntimeException {
     public IngestionException(String message, Throwable cause) {
       super(message, cause);
