@@ -27,14 +27,15 @@ public class ParticellaRepository {
     byte[] geomEwkb = WKB.write(geom);
 
     return db.sql("""
-            INSERT INTO particella (comune, sezione, foglio, numero, geom, ingested_at)
-            VALUES (:comune, :sezione, :foglio, :numero, ST_Multi(ST_GeomFromEWKB(:geom)), NOW())
+            INSERT INTO particella (comune, sezione, foglio, numero, kind, geom, ingested_at)
+            VALUES (:comune, :sezione, :foglio, :numero, :kind, ST_Multi(ST_GeomFromEWKB(:geom)), NOW())
             ON CONFLICT (comune, sezione, foglio, numero) DO NOTHING
             """)
         .param("comune", ref.comune())
         .param("sezione", ref.sezione())
         .param("foglio", ref.foglio())
         .param("numero", ref.numero())
+        .param("kind", ref.kind().name())
         .param("geom", geomEwkb)
         .update();
   }
@@ -42,7 +43,7 @@ public class ParticellaRepository {
   public List<Particella> findWithinBbox(double minLon, double minLat,
                                          double maxLon, double maxLat) {
     return db.sql("""
-            SELECT id, comune, sezione, foglio, numero, st_asbinary(geom) AS geom, ingested_at
+            SELECT id, comune, sezione, foglio, numero, kind, st_asbinary(geom) AS geom, ingested_at
             FROM particella
             WHERE st_intersects(geom, st_makeenvelope(:minLon, :minLat, :maxLon, :maxLat, 4326))
             """)
@@ -67,7 +68,7 @@ public class ParticellaRepository {
         rs.getString("sezione"),
         rs.getString("foglio"),
         rs.getString("numero"),
-        null,
+        ParcelKind.fromString(rs.getString("kind")),
         geom,
         rs.getObject("ingested_at", Instant.class));
   }

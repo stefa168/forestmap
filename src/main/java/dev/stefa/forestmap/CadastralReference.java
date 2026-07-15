@@ -16,7 +16,7 @@ package dev.stefa.forestmap;
  * the final {@code .}) are unambiguous; the internal split of the middle block is the one
  * assumption that the published example alone cannot confirm.
  */
-public record CadastralReference(String comune, String sezione, String foglio, String numero) {
+public record CadastralReference(String comune, String sezione, String foglio, String numero, ParcelKind kind) {
 
   public static CadastralReference parse(String nationalRef, String label) {
         /*if (nationalRef == null || nationalRef.isBlank()) {
@@ -52,7 +52,7 @@ public record CadastralReference(String comune, String sezione, String foglio, S
     String numero = (label != null && !label.isBlank())
         ? label.trim()
         : nationalRef.substring(12);
-    return new CadastralReference(comune, sezione, foglio, numero);
+    return new CadastralReference(comune, sezione, foglio, numero, ParcelKind.fromNumero(numero));
   }
 
   private static String stripLeadingZeros(String s) {
