@@ -3,6 +3,7 @@ package dev.stefa.forestmap;
 import lombok.AllArgsConstructor;
 import org.geotools.geometry.jts.WKBReader;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKBWriter;
@@ -71,5 +72,35 @@ public class ParticellaRepository {
         ParcelKind.fromString(rs.getString("kind")),
         geom,
         rs.getObject("ingested_at", Instant.class));
+  }
+
+  public List<@Nullable String> findParcelsInBboxAsGeoJSON(
+      double minLon, double minLat,
+      double maxLon, double maxLat,
+      int limit
+  ) {
+    return db.sql("""
+            SELECT JSON_BUILD_OBJECT(
+               'type', 'Feature',
+               'id', id,
+               'geometry', ST_AsGeoJSON(geom)::json,
+               'properties', JSON_BUILD_OBJECT(
+                 'id', id,
+                 'comune', comune,
+                 'sezione', sezione,
+                 'foglio', foglio,
+                 'numero', numero,
+                 'kind', kind
+               )
+            ) AS f
+            FROM particella
+            WHERE ST_Intersects(geom, ST_MakeEnvelope(:minLon, :minLat, :maxLon, :maxLat, 4326))
+            LIMIT :limit + 1;
+            """)
+        .param("minLon", minLon).param("minLat", minLat)
+        .param("maxLon", maxLon).param("maxLat", maxLat)
+        .param("limit", limit)
+        .query(String.class)
+        .list();
   }
 }

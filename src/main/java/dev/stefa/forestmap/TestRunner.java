@@ -1,19 +1,35 @@
 package dev.stefa.forestmap;
 
+import com.fasterxml.jackson.annotation.JsonRawValue;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @AllArgsConstructor
 @RestController
 @RequestMapping("/admin")
 public class TestRunner {
   private IngestionService ingestionService;
+  private ParticellaRepository repository;
 
   @GetMapping("/ingest")
   public int ingestBBox(@RequestBody BoundingBox box) {
     return ingestionService.ingest(box);
+  }
+
+  public record FeatureCollection(String type, int count, boolean truncated, @JsonRawValue List<String> features) {}
+
+  @CrossOrigin(origins = "http://localhost:5173")
+  @GetMapping(value = "/parcels", produces = MediaType.APPLICATION_JSON_VALUE)
+  public FeatureCollection parcels(@RequestParam double minLon, @RequestParam double minLat,
+                                   @RequestParam double maxLon, @RequestParam double maxLat) {
+    final int limit = 5000;
+    var features = repository.findParcelsInBboxAsGeoJSON(minLon, minLat, maxLon, maxLat, limit);
+
+    boolean truncated = features.size() >= limit;
+
+    return new FeatureCollection("FeatureCollection", features.size(), truncated, features);
   }
 }
