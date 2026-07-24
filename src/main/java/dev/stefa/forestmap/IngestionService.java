@@ -7,10 +7,9 @@ import org.springframework.stereotype.Service;
 import java.io.InputStream;
 import java.util.List;
 
-/// Drives a bounding-box sweep. Because AdE silently caps results, a response that
-/// comes back full is treated as truncated: the box is split into quadrants and
-/// each is ingested recursively until every leaf returns under the cap. Upserts are
-/// idempotent on (comune, foglio, numero), so re-running any box is safe.
+/// Drives a bounding-box sweep. Because AdE silently caps results, a response that comes back full is treated as
+/// truncated: the box is split into quadrants and each is ingested recursively until every leaf returns under the cap.
+/// Upserts are idempotent on (comune, foglio, numero), so re-running any box is safe.
 @Slf4j
 @AllArgsConstructor
 @Service
@@ -20,9 +19,7 @@ public class IngestionService {
   private final GmlParser parser;
   private final ParticellaRepository repository;
 
-  /**
-   * Ingest one bounding box, subdividing on overflow. Returns the number of parcels seen.
-   */
+  /// Ingest one bounding box, subdividing on overflow. Returns the number of parcels seen.
   public int ingest(BoundingBox box) {
     List<ParsedParcel> parcels;
     try (InputStream response = client.getFeatures(box)) {

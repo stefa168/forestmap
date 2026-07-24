@@ -18,17 +18,14 @@ import java.util.List;
 
 /// Parses an AdE WFS 2.0 response into [ParsedParcel]s.
 ///
-/// Uses GeoTools' [PullParser], the same streaming reader the WFSDataStore
-/// uses internally — but here we drive it ourselves, one feature at a time, which
-/// keeps memory flat on large bbox responses and keeps the failure surface small.
-/// The INSPIRE schema imports resolve through the system-default EntityResolver
-/// configured in `InspireSchemaConfig`; without that, this is exactly where
-/// parsing would fail.
+/// Uses GeoTools' [PullParser], the same streaming reader the WFSDataStore uses internally - but here we drive it
+/// ourselves, one feature at a time, which keeps memory flat on large bbox responses and keeps the failure surface small.
+/// The INSPIRE schema imports resolve through the system-default EntityResolver configured in `InspireSchemaConfig`;
+///  without that, this is exactly where parsing would fail.
 ///
-/// Each INSPIRE `cp:CadastralParcel` arrives flattened into a SimpleFeature
-/// whose attributes include `label`, `nationalCadastralReference`, and a
-/// default geometry — the same shape observed in real responses from sibling INSPIRE
-/// services.
+/// Each INSPIRE `cp:CadastralParcel` arrives flattened into a SimpleFeature whose attributes include `label`,
+/// `nationalCadastralReference`, and a default geometry — the same shape observed in real responses from sibling
+/// INSPIRE services.
 @Slf4j
 @AllArgsConstructor
 @Component

@@ -10,15 +10,11 @@ import org.springframework.context.annotation.Configuration;
 
 /// Geometry + referencing beans shared across the ingestion pipeline.
 ///
-/// Axis order is the subtle bit. AdE declares its data as
-/// `urn:ogc:def:crs:EPSG::6706`; in URN form GeoTools honours the
-/// authoritative axis order, which for 6706 is latitude/longitude. PostGIS, by
-/// contrast, stores SRID 4326 as longitude/latitude (X=lon, Y=lat). So we decode
-/// the target with `longitudeFirst=true` and let the transform do the swap;
-/// the JTS coordinates that come out are lon/lat, ready to persist.
+/// Axis order is the subtle bit. AdE declares its data as `urn:ogc:def:crs:EPSG::6706`; in URN form GeoTools honours
+/// the authoritative axis order, which for 6706 is latitude/longitude.
 ///
-/// If you already have a GeoToolsConfig, merge these definitions in — the axis
-/// handling here is the part worth keeping.
+/// PostGIS, by contrast, stores SRID 4326 as longitude/latitude (X=lon, Y=lat). So we decode the target with
+/// `longitudeFirst=true` and let the transform do the swap; the JTS coordinates that come out are lon/lat, ready to persist.
 @Configuration
 public class GeoToolsConfig {
 

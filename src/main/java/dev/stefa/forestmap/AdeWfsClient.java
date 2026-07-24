@@ -7,11 +7,8 @@ import org.springframework.web.client.RestClient;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-/**
- * Talks to the AdE cadastral WFS. The service only honours GET GetFeature with a
- * BBOX — no attribute filters, no CQL — so this client deliberately exposes
- * nothing more than a bbox fetch.
- */
+/// Talks to the AdE cadastral WFS. The service only honours GET GetFeature with a BBOX (no attribute filters, no CQL)
+/// so this client deliberately exposes nothing more than a bbox fetch.
 @Component
 public class AdeWfsClient {
 

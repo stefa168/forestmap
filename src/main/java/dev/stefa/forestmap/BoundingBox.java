@@ -1,12 +1,12 @@
 package dev.stefa.forestmap;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.List;
 
-/**
- * A bounding box in EPSG:6706 (latitude/longitude order — the order AdE's BBOX
- * parameter expects). Stored as separate lat/lon components precisely so the
- * axis order can't be confused at the call site.
- */
+/// A bounding box in EPSG:6706 (latitude/longitude order — the order AdE's BBOX parameter expects).
+/// Stored as separate lat/lon components precisely so the axis order can't be confused at the call site.
+@NullMarked
 public record BoundingBox(double minLat, double minLon, double maxLat, double maxLon) {
 
     /** Four quadrants, for quadtree subdivision when the server truncates a response. */
