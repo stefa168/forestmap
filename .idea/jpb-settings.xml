@@ -3,5 +3,6 @@
   <component name="DatabaseMigrationSettings" lastSelectedDirectory="$PROJECT_DIR$/src/main/resources/db/migration" />
   <component name="JpaLiquibaseChangesConfig">
     <exclude-change idName="spatial_ref_sys" tagName="dropTable" />
+    <exclude-change idName="particella" tagName="dropTable" />
   </component>
 </project>
