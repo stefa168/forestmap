@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
@@ -21,6 +22,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ParticellaRepository {
   private final JdbcClient db;
+  private final DataSource dataSource;
   private static final WKBWriter WKB = new WKBWriter(2, true);
 
   @Transactional
@@ -39,6 +41,45 @@ public class ParticellaRepository {
         .param("kind", ref.kind().name())
         .param("geom", geomEwkb)
         .update();
+  }
+
+  @Transactional
+  public int batchUpsert(List<ParsedParcel> parcels) {
+    int n = parcels.size();
+    var comuni = new String[n];
+    var sezioni = new String[n];
+    var fogli = new String[n];
+    var numeri = new String[n];
+    var kinds = new String[n];
+    var geoms = new byte[n][];
+
+    for (int i = 0; i < n; i++) {
+      var p = parcels.get(i);
+      var r = p.reference();
+      comuni[i]  = r.comune();
+      sezioni[i] = r.sezione();      // null is fine
+      fogli[i]   = r.foglio();
+      numeri[i]  = r.numero();
+      kinds[i]  = r.kind().name();
+      geoms[i] = WKB.write(p.geometry());
+    }
+
+    return db.sql("""
+        INSERT INTO particella (comune, sezione, foglio, numero, kind, geom)
+        SELECT c,s,f,n,k, ST_GeomFromEWKB(g)
+        FROM UNNEST(:comuni, :sezioni, :fogli, :numeri, :kinds, :geoms) AS t(c,s,f,n,k,g)
+        ON CONFLICT (comune, sezione, foglio, numero) DO NOTHING
+        RETURNING id
+        """)
+        .param("comuni",  comuni)
+        .param("sezioni", sezioni)
+        .param("fogli",   fogli)
+        .param("numeri",  numeri)
+        .param("kinds",  kinds)
+        .param("geoms",   geoms)
+        .query(Long.class)
+        .list()
+        .size();
   }
 
   public List<Particella> findWithinBbox(double minLon, double minLat,

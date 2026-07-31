@@ -17,20 +17,14 @@ import java.util.List;
 @AllArgsConstructor
 @Service
 public class IngestionService {
-
   private static final double WORK_CELL_KM2 = 1.0;   // pre-split target; tune from observed cap
   private static final double TRUST_EMPTY_KM2 = 0.3;   // below this, empty means empty
   private static final int MAX_REQUESTS = 300;   // hard budget per run
-  private static final double MAX_ROOT_KM2 = 50.0;  // reject bigger asks outright
-
+  private static final double MAX_ROOT_KM2 = 15.0;  // reject bigger asks outright
 
   private final AdeWfsClient client;
   private final GmlParser parser;
   private final ParticellaRepository repository;
-
-  record IngestionResults(
-
-  ) {}
 
   /// Ingest one bounding box, subdividing on overflow. Returns the number of parcels seen.
   public int ingest(BoundingBox box) throws XMLStreamException {
@@ -61,21 +55,19 @@ public class IngestionService {
     }
 
     int added = parcels.stream()
-      .map(p -> repository.upsert(p.reference(), p.geometry()))
-      .reduce(0, Integer::sum);
+        .map(p -> repository.upsert(p.reference(), p.geometry()))
+        .reduce(0, Integer::sum);
 
     log.info("bbox {} -> {} parcels found, {} added", box, parcels.size(), added);
     return added;
   }
 
-  public IngestionReport ingest2(BoundingBox root) {
-    if (root.areaSquareKm() > MAX_ROOT_KM2) {
-      throw new IngestionException(
-        "Requested %.1f km² exceeds the %.0f km² per-run limit".formatted(root.areaSquareKm(), MAX_ROOT_KM2));
-    }
+  public IngestionReport ingest2(BoundingBox root) throws XMLStreamException {
+    log.info("New ingestion request {} for a total of {}Km² ({}m)", root, "%.2f".formatted(root.areaSquareKm()), "%.2f".formatted(root.spanMeters()));
+    if (root.areaSquareKm() > MAX_ROOT_KM2)
+      throw new IngestionException("Requested %.1f km² exceeds the %.0f km² per-run limit".formatted(root.areaSquareKm(), MAX_ROOT_KM2));
 
-    Deque<BoundingBox> queue = new ArrayDeque<>();
-    seed(queue, root);
+    Deque<BoundingBox> queue = seed(root);
 
     int requests = 0, found = 0, added = 0;
 
@@ -85,12 +77,12 @@ public class IngestionService {
 
       WfsPage page = client.getFeatures(box);
 
-      if (page.isTruncated(client.maxFeatures())
-        || (page.isEmpty() && box.areaSquareKm() > TRUST_EMPTY_KM2)) {
-        box.quarters().forEach(queue::addFirst);   // no parse; header told us enough
+      if (page.isTruncated(client.maxFeatures()) ||
+          (page.isEmpty() && box.areaSquareKm() > TRUST_EMPTY_KM2)) {
+        queue.addAll(box.quarters()); // no parse; header told us enough
         continue;
       }
-      if (page.isEmpty()) continue;                // small and empty: believed
+      if (page.isEmpty()) continue; // small and empty: believed
 
       List<ParsedParcel> parcels;
       try (InputStream in = page.body()) {
@@ -100,11 +92,11 @@ public class IngestionService {
       }
 
       found += parcels.size();
-      added += parcels.stream()
-        .map(p -> repository.upsert(p.reference(), p.geometry()))
-        .reduce(0, Integer::sum);
-      log.info("bbox {} -> {} parcels, {} added ({}/{} requests)",
-        box, parcels.size(), added, requests, MAX_REQUESTS);
+      added += repository.batchUpsert(parcels);
+      log.info(
+          "bbox {} -> {} parcels found, {} added ({}/{} requests)",
+          box, parcels.size(), added, requests, MAX_REQUESTS
+      );
     }
 
     return new IngestionReport(found, added, requests, List.copyOf(queue));
@@ -128,6 +120,8 @@ public class IngestionService {
 
   /// Thrown when a bbox cannot be fetched or parsed.
   public static class IngestionException extends RuntimeException {
+    public IngestionException(String message) {super(message);}
+
     public IngestionException(String message, Throwable cause) {
       super(message, cause);
     }

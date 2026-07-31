@@ -17,8 +17,8 @@ public class TestRunner {
   private ParticellaRepository repository;
 
   @PostMapping("/ingest")
-  public int ingestBBox(@RequestBody BoundingBox box) throws XMLStreamException {
-    return ingestionService.ingest(box);
+  public IngestionService.IngestionReport ingestBBox(@RequestBody BoundingBox box) throws XMLStreamException {
+    return ingestionService.ingest2(box);
   }
 
   public record FeatureCollection(String type, int count, boolean truncated, @JsonRawValue List<String> features) {}
