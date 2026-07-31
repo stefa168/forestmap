@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.geotools.api.feature.simple.SimpleFeature;
 import org.geotools.api.referencing.operation.MathTransform;
+import org.geotools.api.referencing.operation.TransformException;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.wfs.v2_0.WFSConfiguration;
 import org.geotools.xsd.PullParser;
@@ -11,7 +12,10 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.locationtech.jts.geom.Geometry;
 import org.springframework.stereotype.Component;
+import org.xml.sax.SAXException;
 
+import javax.xml.stream.XMLStreamException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +37,7 @@ public class GmlParser {
 
   private final MathTransform adeToWgs84;
 
-  public List<ParsedParcel> parse(InputStream wfsResponse) throws Exception {
+  public List<ParsedParcel> parse(InputStream wfsResponse) throws XMLStreamException, IOException, SAXException, TransformException {
     PullParser parser = new PullParser(new WFSConfiguration(), wfsResponse, SimpleFeature.class);
 
     List<ParsedParcel> parsed = new ArrayList<>();

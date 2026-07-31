@@ -5,23 +5,24 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.stream.XMLStreamException;
 import java.util.List;
 
 @AllArgsConstructor
 @RestController
 @RequestMapping("/admin")
+@CrossOrigin(origins = "http://localhost:5173")
 public class TestRunner {
   private IngestionService ingestionService;
   private ParticellaRepository repository;
 
-  @GetMapping("/ingest")
-  public int ingestBBox(@RequestBody BoundingBox box) {
+  @PostMapping("/ingest")
+  public int ingestBBox(@RequestBody BoundingBox box) throws XMLStreamException {
     return ingestionService.ingest(box);
   }
 
   public record FeatureCollection(String type, int count, boolean truncated, @JsonRawValue List<String> features) {}
 
-  @CrossOrigin(origins = "http://localhost:5173")
   @GetMapping(value = "/parcels", produces = MediaType.APPLICATION_JSON_VALUE)
   public FeatureCollection parcels(@RequestParam double minLon, @RequestParam double minLat,
                                    @RequestParam double maxLon, @RequestParam double maxLat) {

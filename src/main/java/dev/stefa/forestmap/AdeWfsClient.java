@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
+import javax.xml.stream.XMLStreamException;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
@@ -12,43 +13,47 @@ import java.io.InputStream;
 @Component
 public class AdeWfsClient {
 
-    private static final String BASE =
-            "https://wfs.cartografia.agenziaentrate.gov.it/inspire/wfs/owfs01.php";
+  private static final String BASE =
+    "https://wfs.cartografia.agenziaentrate.gov.it/inspire/wfs/owfs01.php";
 
-    private final RestClient http;
-    private final int maxFeatures;
+  private final RestClient http;
+  private final int maxFeatures;
 
-    public AdeWfsClient(RestClient.Builder builder,
-                        @Value("${cadastre.ade.max-features:1000}") int maxFeatures) {
-        this.http = builder
-                // The endpoint applies bot detection; a plain UA is usually enough.
-                .defaultHeader("User-Agent", "cadastre-ingestion/1.0")
-                .build();
-        this.maxFeatures = maxFeatures;
-    }
+  public AdeWfsClient(RestClient.Builder builder,
+                      @Value("${cadastre.ade.max-features:1000}") int maxFeatures) {
+    this.http = builder
+      // The endpoint applies bot detection; a plain UA is usually enough.
+      .defaultHeader("User-Agent", "cadastre-ingestion/1.0")
+      .build();
+    this.maxFeatures = maxFeatures;
+  }
 
-    /** Raw GML response for the given bbox. Caller is responsible for closing the stream. */
-    public InputStream getFeatures(BoundingBox b) {
-        byte[] body = http.get()
-                .uri(BASE, uri -> uri
-                        .queryParam("language", "ita")
-                        .queryParam("SERVICE", "WFS")
-                        .queryParam("VERSION", "2.0.0")
-                        .queryParam("REQUEST", "GetFeature")
-                        .queryParam("TYPENAMES", "CP:CadastralParcel")
-                        .queryParam("SRSNAME", "urn:ogc:def:crs:EPSG::6706")
-                        // EPSG:6706 axis order is lat,lon -> minLat,minLon,maxLat,maxLon
-                        .queryParam("BBOX", "%s,%s,%s,%s".formatted(
-                                b.minLat(), b.minLon(), b.maxLat(), b.maxLon()))
-                        .queryParam("COUNT", maxFeatures)
-                        .build())
-                .retrieve()
-                .body(byte[].class);
-        return new ByteArrayInputStream(body == null ? new byte[0] : body);
-    }
+  /**
+   * Raw GML response for the given bbox. Caller is responsible for closing the stream.
+   */
+  public WfsPage getFeatures(BoundingBox b) throws XMLStreamException {
+    var body = http.get()
+      .uri(BASE, uri -> uri
+        .queryParam("language", "ita")
+        .queryParam("SERVICE", "WFS")
+        .queryParam("VERSION", "2.0.0")
+        .queryParam("REQUEST", "GetFeature")
+        .queryParam("TYPENAMES", "CP:CadastralParcel")
+        .queryParam("SRSNAME", "urn:ogc:def:crs:EPSG::6706")
+        // EPSG:6706 axis order is lat,lon -> minLat,minLon,maxLat,maxLon
+        .queryParam("BBOX", "%s,%s,%s,%s".formatted(
+          b.minLat(), b.minLon(), b.maxLat(), b.maxLon()))
+        .queryParam("COUNT", maxFeatures)
+        .build())
+      .retrieve()
+      .body(byte[].class);
+    return WfsPage.of(body == null ? new byte[0] : body);
+  }
 
-    /** The per-request feature cap; a full page signals likely truncation. */
-    public int maxFeatures() {
-        return maxFeatures;
-    }
+  /**
+   * The per-request feature cap; a full page signals likely truncation.
+   */
+  public int maxFeatures() {
+    return maxFeatures;
+  }
 }
