@@ -1,9 +1,4 @@
 <script lang="ts">
-  import * as NavigationMenu from "$lib/components/ui/navigation-menu";
-  import {navigationMenuTriggerStyle} from "$lib/components/ui/navigation-menu/navigation-menu-trigger.svelte";
-  import {Button} from "$lib/components/ui/button";
-  import {cn} from "$lib/utils.js";
-
   // Icone
   import LucideMapPin from '~icons/lucide/map-pin'
   import LucideShieldCheck from '~icons/lucide/shield-check'
@@ -15,13 +10,10 @@
   import hero_img from '$lib/assets/hero_img.jpg'
   import chisiamo from '$lib/assets/IMG_20210503_120138.jpg'
   import mappa from '$lib/assets/piemonte_mappa_placeholder.jpg'
-
-  const links = [
-    {label: "Chi siamo", href: "#chi-siamo"},
-    {label: "La rete", href: "#come-funziona"},
-    {label: "Boschi", href: "#galleria"},
-    {label: "Novità", href: "#novita"},
-  ];
+	import Navbar from "./navbar.svelte";
+	import Hero from './hero.svelte';
+	import Section from './section.svelte';
+	import StatsBand from './stats-band.svelte';
 
   const manifesto = [
     {
@@ -60,109 +52,20 @@
   ]
 </script>
 
-<nav class="fixed inset-x-0 top-4 z-50 flex justify-center px-4">
-  <div class="flex w-full max-w-280 items-center justify-between gap-6
-              rounded-full border bg-background/80 py-2 pr-2 pl-5 shadow-lg backdrop-blur-md">
-    <!-- logoId: plain anchor, deliberately outside NavigationMenu -->
-    <a href="#top" class="flex items-center gap-2.5 text-foreground">
-      <Logo/>
-      <span class="text-[15px] font-bold leading-[1.05] tracking-[-0.02em]">
-        Rete dei Boschi<br/><span class="text-primary">Custoditi</span>
-      </span>
-    </a>
-
-    <div class="flex items-center gap-1">
-      <NavigationMenu.Root viewport={false}>
-        <NavigationMenu.List class="gap-1">
-          {#each links as link}
-            <NavigationMenu.Item>
-              <NavigationMenu.Link>
-                {#snippet child()}
-                  <a href={link.href}
-                     class={cn(navigationMenuTriggerStyle(),
-                       "rounded-full bg-transparent text-muted-foreground hover:text-foreground")}>
-                    {link.label}
-                  </a>
-                {/snippet}
-              </NavigationMenu.Link>
-            </NavigationMenu.Item>
-          {/each}
-        </NavigationMenu.List>
-      </NavigationMenu.Root>
-
-      <Button href="#manifesto" class="ml-2 rounded-full font-semibold">Scopri il Manifesto</Button>
-    </div>
-  </div>
-</nav>
+<Navbar/>
 
 <div id="top"></div>
 
-<header class="relative flex min-h-dvh items-end overflow-hidden">
-  <enhanced:img
-      src={hero_img}
-      alt="Foto di un bosco custodito"
-      class="absolute inset-0 h-full w-full object-cover"
-  />
-  <!-- Overlay immagine con gradiente -->
-  <div
-      class="pointer-events-none absolute inset-0"
-      style="background:linear-gradient(to top,rgba(11,26,15,0.90) 0%,rgba(11,26,15,0.55) 40%,rgba(11,26,15,0.15) 75%,rgba(11,26,15,0.35) 100%);"
-  ></div>
+<Hero/>
 
-  <div class="relative mx-auto w-full max-w-280 px-6 pb-22 text-[#F3F7F0]">
-    <h1 class="m-0 max-w-[16ch] text-[clamp(2.375rem,6vw,4.25rem)] font-bold leading-[1.02]
-               tracking-[-0.03em] text-balance
-               animate-in fade-in slide-in-from-bottom-[14px] fill-mode-both duration-600 delay-50">
-      Mettiamo al sicuro i boschi più preziosi del Piemonte.
-    </h1>
-    <p class="mt-6 max-w-[56ch] text-[clamp(1.0625rem,2vw,1.3125rem)] leading-[1.55] text-[#F3F7F0]/88
-              animate-in fade-in slide-in-from-bottom-[14px] fill-mode-both duration-600 delay-[120ms]"
-    >
-      62 realtà unite che, dal basso e con l'acquisto diretto, sottraggono alla distruzione le foreste di elevata
-      naturalità — e le custodiscono per sempre.
-    </p>
-
-    <div class="mt-8 flex flex-wrap gap-3
-                animate-in fade-in slide-in-from-bottom-[14px] fill-mode-both duration-600 delay-[180ms]">
-      <a href="#manifesto"
-         class="rounded-md bg-[#F3F7F0] px-6 py-3.5 text-[15px] font-semibold text-[#16281B]
-                transition-colors hover:bg-white">
-        Scopri il Manifesto
-      </a>
-      <a href="#come-funziona"
-         class="rounded-md border border-[#F3F7F0]/35 bg-[#F3F7F0]/8 px-6 py-3.5 text-[15px]
-                font-semibold text-[#F3F7F0] transition-colors hover:bg-[#F3F7F0]/16">
-        Come funziona la rete
-      </a>
-    </div>
-  </div>
-</header>
-
-{#snippet statElement(value: string, label: string)}
-  <div class={["flex-1 px-8 py-10 text-center "]}>
-    <div class="text-5xl tracking-tight font-bold text-primary leading-none">{value}</div>
-    <div class="mt-2 text-sm text-muted-foreground">{label}</div>
-  </div>
-{/snippet}
-
-<section class="border-b">
-  <div class="mx-auto max-w-280 flex flex-col divide-y divide-border sm:flex-row sm:divide-x sm:divide-y-0">
-    {@render statElement("62", "realtà aderenti")}
-    {@render statElement("500+", "ettari già protetti")}
-    {@render statElement(6, "nodi fondatori")}
-    {@render statElement(2026, "rete fondata")}
-  </div>
-</section>
+<StatsBand/>
 
 <section id="chi-siamo" class="max-w-280 my-0 mx-auto px-6 py-20 grid grid-cols-2 gap-16 items-center">
   <div>
     <p class="section-title text-chart-2">
       Chi siamo
     </p>
-    <h2 class="text-[clamp(30px,3.6vw,42px)] leading-[1.1] font-bold tracking-tight text-balance text-card-foreground">
-      Il bosco è un sistema vivente, non una merce.
-    </h2>
-    <h2 class="leading-[1.1] font-bold tracking-tight text-balance text-card-foreground">
+    <h2 class="section-subtitle text-card-foreground">
       Il bosco è un sistema vivente, non una merce.
     </h2>
     <p class="mt-8 text-[17px] text-[#45514a] leading-[1.7]">
@@ -245,19 +148,21 @@
         <div class="section-title text-chart-2">
           I boschi custoditi
         </div>
-        <h2 style="margin:0;font-size:clamp(30px,3.6vw,42px);line-height:1.1;font-weight:700;letter-spacing:-0.025em;color:#16281B;text-wrap:balance;">
+        <h2 class="section-subtitle text-card-foreground">
           Ciò che proteggiamo, in immagini.
         </h2>
       </div>
-      <p style="margin:0;max-width:34ch;font-size:14px;color:#6B766C;">In futuro le foto verranno raccolte a rotazione dalle diverse realtà della Rete.</p>
+      <p class="m-0 max-w-[34ch] text-sm leading-[1.65] text-[#6B766C]">
+        In futuro le foto verranno raccolte a rotazione dalle diverse realtà della Rete.
+      </p>
     </div>
     <div style="margin-top:44px;display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:200px;gap:16px;">
-      <div style="grid-column:span 2;grid-row:span 2;position:relative;border-radius:14px;overflow:hidden;border:1px solid #DEE6D8;"><image-slot id="rbc-g1" shape="rect" fit="cover" placeholder="Bosco 1"></image-slot></div>
-      <div style="position:relative;border-radius:14px;overflow:hidden;border:1px solid #DEE6D8;"><image-slot id="rbc-g2" shape="rect" fit="cover" placeholder="Bosco 2"></image-slot></div>
-      <div style="position:relative;border-radius:14px;overflow:hidden;border:1px solid #DEE6D8;"><image-slot id="rbc-g3" shape="rect" fit="cover" placeholder="Bosco 3"></image-slot></div>
-      <div style="grid-column:span 2;position:relative;border-radius:14px;overflow:hidden;border:1px solid #DEE6D8;"><image-slot id="rbc-g4" shape="rect" fit="cover" placeholder="Bosco 4"></image-slot></div>
-      <div style="position:relative;border-radius:14px;overflow:hidden;border:1px solid #DEE6D8;"><image-slot id="rbc-g5" shape="rect" fit="cover" placeholder="Bosco 5"></image-slot></div>
-      <div style="position:relative;border-radius:14px;overflow:hidden;border:1px solid #DEE6D8;"><image-slot id="rbc-g6" shape="rect" fit="cover" placeholder="Bosco 6"></image-slot></div>
+      <div style="grid-column:span 2;grid-row:span 2;position:relative;border-radius:14px;overflow:hidden;border:1px solid #DEE6D8;"></div>
+      <div style="position:relative;border-radius:14px;overflow:hidden;border:1px solid #DEE6D8;"></div>
+      <div style="position:relative;border-radius:14px;overflow:hidden;border:1px solid #DEE6D8;"></div>
+      <div style="grid-column:span 2;position:relative;border-radius:14px;overflow:hidden;border:1px solid #DEE6D8;"></div>
+      <div style="position:relative;border-radius:14px;overflow:hidden;border:1px solid #DEE6D8;"></div>
+      <div style="position:relative;border-radius:14px;overflow:hidden;border:1px solid #DEE6D8;"></div>
     </div>
   </div>
 </section>
@@ -299,7 +204,7 @@
   <div style="margin-top:48px;position:relative;">
     <div style="position:absolute;left:0;top:0;bottom:0;width:120px;z-index:2;pointer-events:none;background:linear-gradient(to right,#FBFBF8,rgba(251,251,248,0));"></div>
     <div style="position:absolute;right:0;top:0;bottom:0;width:120px;z-index:2;pointer-events:none;background:linear-gradient(to left,#FBFBF8,rgba(251,251,248,0));"></div>
-    <div style="display:flex;width:max-content;gap:16px;padding:0 8px;animation:rbc-marquee 34s linear infinite;" style-hover="animation-play-state:paused;">
+    <div style="display:flex;width:max-content;gap:16px;padding:0 8px;animation:rbc-marquee 34s linear infinite;"> <!-- style-hover="animation-play-state:paused;" -->
 <!--      <sc-for list="{{ marquee }}" as="assoc" hint-placeholder-count="8">
         <div style="position:relative;flex:none;width:280px;display:flex;align-items:center;gap:16px;padding:22px 24px;border:1px solid #DEE6D8;border-radius:16px;background:#ffffff;cursor:default;" style-hover="border-color:#1F5130;box-shadow:0 10px 15px -3px rgba(22,40,27,0.1);" onMouseEnter="{{ assoc.onEnter }}" onMouseLeave="{{ assoc.onLeave }}">
           <div style="flex:none;width:54px;height:54px;border-radius:12px;background:#EDF2E8;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:#1F5130;letter-spacing:-0.02em;">{{ assoc.initials }}</div>
@@ -371,8 +276,8 @@
       <h2 style="margin:0 auto;max-width:20ch;font-size:clamp(30px,4vw,46px);line-height:1.08;font-weight:700;letter-spacing:-0.03em;color:#F3F7F0;text-wrap:balance;">Vuoi custodire un bosco con noi?</h2>
       <p style="margin:20px auto 0;max-width:52ch;font-size:18px;line-height:1.6;color:rgba(243,247,240,0.8);">La Rete è aperta a nuove realtà associative e private che condividono valori, principi e orizzonti comuni.</p>
       <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:34px;justify-content:center;">
-        <a href="#contatti" style="padding:14px 28px;border-radius:8px;font-size:15px;font-weight:600;background:#F3F7F0;color:#16281B;" style-hover="background:#ffffff;">Aderisci alla Rete</a>
-        <a href="#contatti" style="padding:14px 28px;border-radius:8px;font-size:15px;font-weight:600;background:rgba(243,247,240,0.08);color:#F3F7F0;border:1px solid rgba(243,247,240,0.35);" style-hover="background:rgba(243,247,240,0.16);">Contattaci</a>
+        <a href="#contatti" style="padding:14px 28px;border-radius:8px;font-size:15px;font-weight:600;background:#F3F7F0;color:#16281B;" >Aderisci alla Rete</a> <!-- style-hover="background:#ffffff;" -->
+        <a href="#contatti" style="padding:14px 28px;border-radius:8px;font-size:15px;font-weight:600;background:rgba(243,247,240,0.08);color:#F3F7F0;border:1px solid rgba(243,247,240,0.35);" >Contattaci</a> <!-- style-hover="background:rgba(243,247,240,0.16);" -->
       </div>
     </div>
   </div>
@@ -395,11 +300,11 @@
     <div>
       <div style="font-size:13px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#8A948B;margin-bottom:16px;">Sezioni</div>
       <div style="display:flex;flex-direction:column;gap:10px;font-size:14px;">
-        <a href="#chi-siamo" style="color:#45514A;" style-hover="color:#1F5130;">Chi siamo</a>
-        <a href="#manifesto" style="color:#45514A;" style-hover="color:#1F5130;">Il Manifesto</a>
-        <a href="#come-funziona" style="color:#45514A;" style-hover="color:#1F5130;">Come funziona</a>
-        <a href="#galleria" style="color:#45514A;" style-hover="color:#1F5130;">I boschi</a>
-        <a href="#novita" style="color:#45514A;" style-hover="color:#1F5130;">Novità</a>
+        <a href="#chi-siamo" style="color:#45514A;" class="text-[#1F5130]">Chi siamo</a>
+        <a href="#manifesto" style="color:#45514A;" class="text-[#1F5130]">Il Manifesto</a>
+        <a href="#come-funziona" style="color:#45514A;" class="text-[#1F5130]">Come funziona</a>
+        <a href="#galleria" style="color:#45514A;" class="text-[#1F5130]">I boschi</a>
+        <a href="#novita" style="color:#45514A;" class="text-[#1F5130]">Novità</a>
       </div>
     </div>
     <div>
