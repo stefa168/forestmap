@@ -1,5 +1,13 @@
 <script lang="ts">
-  import {MapLibre, NavigationControl, ScaleControl, GeoJSONSource, FillLayer, LineLayer} from 'svelte-maplibre-gl';
+  import {
+    MapLibre,
+    NavigationControl,
+    ScaleControl,
+    GeoJSONSource,
+    FillLayer,
+    LineLayer,
+    CustomControl
+  } from 'svelte-maplibre-gl';
   import maplibregl, {type MapGeoJSONFeature} from "maplibre-gl";
   import {onMount} from "svelte";
 
@@ -8,18 +16,40 @@
   let parcelsData = $state({type: "FeatureCollection", features: []});
   let map: maplibregl.Map | undefined = $state();
   let hoveredId: string | number | null = $state(null);
+  import LucideCloudDownload from '~icons/lucide/cloud-download'
 
   const loadParcels = async () => {
     if (!map || map.getZoom() < 14) return;
 
     const b = map.getBounds();
     const qs = new URLSearchParams({
-      minLon: b.getWest(), minLat: b.getSouth(),
-      maxLon: b.getEast(), maxLat: b.getNorth()
+      minLon: b.getWest().toString(10),
+      minLat: b.getSouth().toString(10),
+      maxLon: b.getEast().toString(10),
+      maxLat: b.getNorth().toString(10)
     });
     // todo remote function
     const res = await fetch(`http://localhost:8080/admin/parcels?${qs}`);
     parcelsData = await res.json();   // reassignment -> source updates itself
+  }
+
+  const ingestZone = async () => {
+    if (!map || map.getZoom() < 14) return;
+
+    const b = map.getBounds();
+    const bbox = {
+      minLon: b.getWest(), minLat: b.getSouth(),
+      maxLon: b.getEast(), maxLat: b.getNorth()
+    }
+
+    const res = await fetch(`http://localhost:8080/admin/ingest`, {
+      method: 'POST',
+      body: JSON.stringify(bbox),
+      headers: {"Content-Type": "application/json"}
+    });
+
+    console.log(`Ingested ${await res.text()} parcels`);
+    await loadParcels()
   }
 
   const setHoveredParcel = (id: string | number | null) => {
@@ -41,19 +71,28 @@
 </script>
 
 <MapLibre
-    bind:map
-    class="h-200"
-    {style}
-    zoom={14}
-    center={{ lng: 8.00454, lat: 44.95358 }}
-    onmoveend={loadParcels}
+  bind:map
+  class="h-200"
+  {style}
+  zoom={14}
+  center={{ lng: 8.00454, lat: 44.95358 }}
+  onmoveend={loadParcels}
 >
+  <CustomControl>
+    <button
+      onclick={ingestZone}
+      class="flex! items-center justify-center text-gray-900"
+    >
+      <LucideCloudDownload class="w-5"/>
+    </button>
+  </CustomControl>
+
   <NavigationControl/>
   <ScaleControl/>
   <!--  <GlobeControl/>-->
-  <GeoJSONSource id="parcels" data={parcelsData} promoteId="id">
+  <GeoJSONSource id="parcels" data={parcelsData} promoteId="id" attribution="Agenzia delle Entrate">
     <FillLayer
-        paint={{
+      paint={{
         'fill-color': [
             'case',
             ['boolean', ['feature-state', 'hover'], false],
@@ -62,18 +101,18 @@
           ],
           'fill-opacity': 0.45
         }}
-        onmousemove={(e) => {
+      onmousemove={(e) => {
           const f = e.features?.[0] as MapGeoJSONFeature | undefined;
           if(f){
             setHoveredParcel(f.id??null);
             if(map) map.getCanvas().style.cursor = 'pointer'
           }
         }}
-        onmouseleave={() => {
+      onmouseleave={() => {
           setHoveredParcel(null);
           if(map) map.getCanvas().style.cursor = '';
         }}
-        onclick={(e) => {
+      onclick={(e) => {
           console.log("Clicked on feature", e.features?.[0].properties)
         }}
     />
