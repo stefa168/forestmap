@@ -7,6 +7,7 @@ import org.geotools.api.referencing.operation.MathTransform;
 import org.geotools.api.referencing.operation.TransformException;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.wfs.v2_0.WFSConfiguration;
+import org.geotools.xsd.Configuration;
 import org.geotools.xsd.PullParser;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -36,9 +37,10 @@ import java.util.List;
 public class GmlParser {
 
   private final MathTransform adeToWgs84;
+  private final Configuration configuration = wfsConfiguration();
 
   public List<ParsedParcel> parse(InputStream wfsResponse) throws XMLStreamException, IOException, SAXException, TransformException {
-    PullParser parser = new PullParser(new WFSConfiguration(), wfsResponse, SimpleFeature.class);
+    PullParser parser = new PullParser(configuration, wfsResponse, SimpleFeature.class);
 
     List<ParsedParcel> parsed = new ArrayList<>();
     Object next;
@@ -77,6 +79,18 @@ public class GmlParser {
       parsed.add(new ParsedParcel(reference, wgs84));
     }
     return parsed;
+  }
+
+  private static @NonNull WFSConfiguration wfsConfiguration() {
+    var config = new WFSConfiguration();
+    var gml = config.getDependency(org.geotools.gml3.v3_2.GMLConfiguration.class);
+    if (gml == null) {
+      throw new IllegalStateException("No GMLConfiguration in the WFS dependency tree");
+    }
+
+    gml.setGeometryFactory(new ClosingGeometryFactory());
+
+    return config;
   }
 
   private static @Nullable Object getIgnoreCase(@NonNull SimpleFeature f, String name) {
