@@ -38,10 +38,15 @@
 	--sidebar-accent-foreground: oklch(0.257 0.034 152.2);
 	--sidebar-border: oklch(0.915 0.021 131.5);
 	--sidebar-ring: oklch(0.579 0.1 147.6);
+
+	--color-body: #45514a;
+	--section-eyebrow: oklch(0.579 0.1 147.6);
+	--section-heading: oklch(0.257 0.034 152.2);
+	--section-lead: oklch(0.553 0.02 147.9);
 }
 
 .dark {
-	--background: oklch(0.22 0.028 152);           /* deep forest, from dark sections */
+	--background: oklch(0.257 0.034 152.2);           /* deep forest, from dark sections */
 	--foreground: oklch(0.971 0.01 131.4);         /* #F3F7F0 */
 	--card: oklch(0.27 0.03 152);
 	--card-foreground: oklch(0.971 0.01 131.4);
@@ -72,6 +77,11 @@
 	--sidebar-accent-foreground: oklch(0.971 0.01 131.4);
 	--sidebar-border: oklch(0.971 0.01 131 / 12%);
 	--sidebar-ring: oklch(0.6 0.08 146);
+
+	--color-body: #b8c9bc;
+	--section-eyebrow: oklch(0.812 0.116 146.1);
+	--section-heading: oklch(0.955 0.014 128.6);
+	--section-lead: rgba(243,247,240,0.78);
 }
 
 @theme inline {
@@ -135,11 +145,18 @@
 }
 
 @utility section-title {
-	@apply text-[13px] font-semibold uppercase tracking-wider mb-4;
+	@apply text-[13px] font-semibold uppercase tracking-wider;
+	color: var(--section-eyebrow)
 }
 
 @utility section-subtitle {
-	@apply text-[clamp(30px,3.6vw,42px)] leading-[1.1] font-bold tracking-tight text-balance
+	@apply text-[clamp(30px,3.6vw,42px)] leading-[1.1] font-bold tracking-tight text-balance;
+	color: var(--section-heading)
+}
+
+@utility section-lead {
+	@apply text-lg text-[17px] leading-7;
+	color: var(--section-lead)
 }
 
 /* 1. Frosted surface — the navbar pill, and any future floating chrome
