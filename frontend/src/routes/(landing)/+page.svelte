@@ -15,6 +15,7 @@
   import Section from './section.svelte';
   import SectionHeader from './section-header.svelte';
   import StatsBand from './stats-band.svelte';
+  import AssociationsMarquee from './associations-marquee.svelte';
 
   const manifesto = [
     {
@@ -60,6 +61,14 @@
 <Hero/>
 
 <StatsBand/>
+<Section id="associazioni" containerClass="pt-4 pb-0">
+  <AssociationsMarquee/>
+  <div class="text-center mt-8">
+    <span class="px-4 py-2 font-semibold rounded-2xl text-sm" style="background:#EDF2E8;color:#1F5130">
+      + altre 56 realtà aderenti
+    </span>
+  </div>
+</Section>
 
 <Section id="chi-siamo" class="grid grid-cols-2 items-center gap-16 pt-10">
   <div>
@@ -177,49 +186,6 @@
   </div>
 </section>
 -->
-
-<!-- ===== ASSOCIAZIONI / MARQUEE ===== -->
-<section id="associazioni" style="padding:104px 0;overflow:hidden;">
-  <div style="max-width:1120px;margin:0 auto;padding:0 24px;text-align:center;">
-    <div class="section-title text-chart-2">
-      Le realtà della Rete
-    </div>
-    <h2 style="margin:0 auto;max-width:22ch;font-size:clamp(28px,3.4vw,40px);line-height:1.12;font-weight:700;letter-spacing:-0.025em;color:#16281B;text-wrap:balance;">
-      Associazioni, fondazioni e comitati, uniti dallo stesso orizzonte.</h2>
-    <p style="margin:16px auto 0;max-width:46ch;font-size:15px;color:#6B766C;">Passa il mouse su un logo per fermare lo
-      scorrimento e scoprire chi è.</p>
-  </div>
-
-  <div style="margin-top:48px;position:relative;">
-    <div
-        style="position:absolute;left:0;top:0;bottom:0;width:120px;z-index:2;pointer-events:none;background:linear-gradient(to right,#FBFBF8,rgba(251,251,248,0));"></div>
-    <div
-        style="position:absolute;right:0;top:0;bottom:0;width:120px;z-index:2;pointer-events:none;background:linear-gradient(to left,#FBFBF8,rgba(251,251,248,0));"></div>
-    <div style="display:flex;width:max-content;gap:16px;padding:0 8px;animation:rbc-marquee 34s linear infinite;">
-      <!-- style-hover="animation-play-state:paused;" -->
-      <!--      <sc-for list="{{ marquee }}" as="assoc" hint-placeholder-count="8">
-              <div style="position:relative;flex:none;width:280px;display:flex;align-items:center;gap:16px;padding:22px 24px;border:1px solid #DEE6D8;border-radius:16px;background:#ffffff;cursor:default;" style-hover="border-color:#1F5130;box-shadow:0 10px 15px -3px rgba(22,40,27,0.1);" onMouseEnter="{{ assoc.onEnter }}" onMouseLeave="{{ assoc.onLeave }}">
-                <div style="flex:none;width:54px;height:54px;border-radius:12px;background:#EDF2E8;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:#1F5130;letter-spacing:-0.02em;">{{ assoc.initials }}</div>
-                <div style="min-width:0;">
-                  <div style="font-weight:600;font-size:15px;line-height:1.2;color:#16281B;">{{ assoc.name }}</div>
-                  <div style="margin-top:3px;font-size:12px;color:#8A948B;">Nodo della Rete</div>
-                </div>
-                <sc-if value="{{ assoc.active }}" hint-placeholder-val="{{ false }}">
-                  <div style="position:absolute;bottom:calc(100% + 12px);left:50%;transform:translateX(-50%);width:250px;z-index:5;pointer-events:none;background:#16281B;color:#F3F7F0;padding:14px 16px;border-radius:12px;box-shadow:0 20px 25px -5px rgba(0,0,0,0.3);animation:rbc-rise .16s ease both;">
-                    <div style="font-weight:600;font-size:14px;line-height:1.25;">{{ assoc.name }}</div>
-                    <div style="margin-top:6px;font-size:13px;line-height:1.45;color:rgba(243,247,240,0.82);">{{ assoc.desc }}</div>
-                    <div style="position:absolute;top:100%;left:50%;transform:translateX(-50%);border:7px solid transparent;border-top-color:#16281B;"></div>
-                  </div>
-                </sc-if>
-              </div>
-            </sc-for>-->
-    </div>
-  </div>
-  <div style="text-align:center;margin-top:36px;">
-    <span
-        style="display:inline-block;padding:8px 16px;border-radius:9999px;background:#EDF2E8;color:#1F5130;font-size:14px;font-weight:600;">+ altre 56 realtà aderenti</span>
-  </div>
-</section>
 
 <!-- ===== NOVITA ===== -->
 <!--
