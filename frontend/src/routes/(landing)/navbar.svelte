@@ -11,7 +11,7 @@
   import type {Component} from "svelte";
   import type {SvelteHTMLElements} from "svelte/elements";
 
-  import Logo from "$lib/assets/logo.svelte";
+  import Logo from "$lib/assets/logo_bg_trans.svg";
   import hero_img from '$lib/assets/hero_img.jpg'
   import chisiamo from '$lib/assets/IMG_20210503_120138.jpg'
   import mappa from '$lib/assets/piemonte_mappa_placeholder.jpg'
@@ -29,7 +29,7 @@
               rounded-full border bg-background/80 py-2 pr-2 pl-5 shadow-lg backdrop-blur-md">
     <!-- logoId: plain anchor, deliberately outside NavigationMenu -->
     <a href="#top" class="flex items-center gap-2.5 text-foreground">
-      <Logo/>
+      <img alt="logo" src={Logo} class="h-10"/>
       <span class="text-[15px] font-bold leading-[1.05] tracking-[-0.02em]">
         Rete dei Boschi<br/><span class="text-primary">Custoditi</span>
       </span>

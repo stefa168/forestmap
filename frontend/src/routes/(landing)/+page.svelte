@@ -6,7 +6,7 @@
   import type {Component} from "svelte";
   import type {SvelteHTMLElements} from "svelte/elements";
 
-  import Logo from "$lib/assets/logo.svelte";
+  import Logo from "$lib/assets/logo_bg_trans.svg";
   import hero_img from '$lib/assets/hero_img.jpg'
   import chisiamo from '$lib/assets/IMG_20210503_120138.jpg'
   import mappa from '$lib/assets/piemonte_mappa_placeholder.jpg'
@@ -73,8 +73,8 @@
 <Section id="chi-siamo" class="grid grid-cols-2 items-center gap-16 pt-10">
   <div>
     <SectionHeader
-        eyebrow="Chi siamo"
-        heading="Il bosco è un sistema vivente, non una merce."
+      eyebrow="Chi siamo"
+      heading="Il bosco è un sistema vivente, non una merce."
     />
     <div class="flex flex-col gap-4">
       <p>
@@ -96,9 +96,9 @@
 
 <Section id="manifesto" variant="dark">
   <SectionHeader
-      eyebrow="Il Manifesto"
-      heading="I principi che ci uniscono."
-      lead="La carta fondativa della Rete: un decalogo di valori e indicazioni operative. Ne trovi qui i cardini."
+    eyebrow="Il Manifesto"
+    heading="I principi che ci uniscono."
+    lead="La carta fondativa della Rete: un decalogo di valori e indicazioni operative. Ne trovi qui i cardini."
   />
 
   <div class="mt-12 grid grid-cols-2 gap-5">
@@ -115,8 +115,8 @@
 
 <Section id="come-funziona">
   <SectionHeader
-      eyebrow="Come funziona la Rete"
-      heading="Nodi autonomi, un'unica strategia condivisa."
+    eyebrow="Come funziona la Rete"
+    heading="Nodi autonomi, un'unica strategia condivisa."
   />
 
   <div class="mt-12 grid grid-cols-3 gap-6">
@@ -152,11 +152,11 @@
     </div>
     <div style="margin-top:44px;display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:200px;gap:16px;">
       <div
-          style="grid-column:span 2;grid-row:span 2;position:relative;border-radius:14px;overflow:hidden;border:1px solid #DEE6D8;"></div>
+        style="grid-column:span 2;grid-row:span 2;position:relative;border-radius:14px;overflow:hidden;border:1px solid #DEE6D8;"></div>
       <div style="position:relative;border-radius:14px;overflow:hidden;border:1px solid #DEE6D8;"></div>
       <div style="position:relative;border-radius:14px;overflow:hidden;border:1px solid #DEE6D8;"></div>
       <div
-          style="grid-column:span 2;position:relative;border-radius:14px;overflow:hidden;border:1px solid #DEE6D8;"></div>
+        style="grid-column:span 2;position:relative;border-radius:14px;overflow:hidden;border:1px solid #DEE6D8;"></div>
       <div style="position:relative;border-radius:14px;overflow:hidden;border:1px solid #DEE6D8;"></div>
       <div style="position:relative;border-radius:14px;overflow:hidden;border:1px solid #DEE6D8;"></div>
     </div>
@@ -226,16 +226,19 @@
 <!-- ===== CTA ADERISCI ===== -->
 <section id="aderisci" style="max-width:1120px;margin:0 auto;padding:104px 24px;">
   <div
-      style="position:relative;overflow:hidden;border-radius:24px;background:#16281B;padding:72px 48px;text-align:center;">
-    <svg viewBox="0 0 120 90" preserveAspectRatio="xMidYMax meet"
+    style="position:relative;overflow:hidden;border-radius:24px;background:#16281B;padding:72px 48px;text-align:center;">
+    <!--<svg viewBox="0 0 120 90" preserveAspectRatio="xMidYMax meet"
          style="position:absolute;left:50%;bottom:-20%;transform:translateX(-50%);width:720px;opacity:0.16;"
          fill="none">
       <path d="M-6 92 A72 72 0 0 1 126 92" stroke="#8FD694" stroke-width="6"/>
       <path d="M10 92 A56 56 0 0 1 110 92" stroke="#8FD694" stroke-width="6"/>
       <path d="M26 92 A40 40 0 0 1 94 92" stroke="#8FD694" stroke-width="6"/>
-    </svg>
+    </svg>-->
+    <img src={Logo} alt=""
+         style="position:absolute;left:50%;bottom:-20%;transform:translateX(-50%);width:720px;opacity:0.25;"/>
     <div style="position:relative;">
-      <h2 style="margin:0 auto;max-width:20ch;font-size:clamp(30px,4vw,46px);line-height:1.08;font-weight:700;letter-spacing:-0.03em;color:#F3F7F0;text-wrap:balance;">
+      <h2
+        style="margin:0 auto;max-width:20ch;font-size:clamp(30px,4vw,46px);line-height:1.08;font-weight:700;letter-spacing:-0.03em;color:#F3F7F0;text-wrap:balance;">
         Vuoi custodire un bosco con noi?</h2>
       <p style="margin:20px auto 0;max-width:52ch;font-size:18px;line-height:1.6;color:rgba(243,247,240,0.8);">La Rete è
         aperta a nuove realtà associative e private che condividono valori, principi e orizzonti comuni.</p>
@@ -254,23 +257,19 @@
 <!-- ===== FOOTER ===== -->
 <footer id="contatti" style="border-top:1px solid #DEE6D8;background:#ffffff;">
   <div
-      style="max-width:1120px;margin:0 auto;padding:72px 24px 40px;display:grid;grid-template-columns:1.4fr 1fr 1.3fr;gap:48px;">
+    style="max-width:1120px;margin:0 auto;padding:72px 24px 40px;display:grid;grid-template-columns:1.4fr 1fr 1.3fr;gap:48px;">
     <div>
       <a href="#top" style="display:flex;align-items:center;gap:10px;color:#16281B;">
-        <svg viewBox="0 0 120 90" width="34" height="26" fill="none" style="flex:none;">
-          <path d="M14 82 A46 46 0 0 1 106 82" stroke="#3d7350" stroke-width="7" stroke-linecap="round"/>
-          <path d="M28 82 A32 32 0 0 1 92 82" stroke="#2f5a3b" stroke-width="7" stroke-linecap="round"/>
-          <path d="M42 82 A18 18 0 0 1 78 82" stroke="#1F5130" stroke-width="7" stroke-linecap="round"/>
-        </svg>
+        <img alt="logo" src={Logo} class="h-10"/>
         <span style="font-weight:700;font-size:15px;letter-spacing:-0.02em;line-height:1.05;">Rete dei Boschi<br><span
-            style="color:#1F5130;">Custoditi</span></span>
+          style="color:#1F5130;">Custoditi</span></span>
       </a>
       <p style="margin:20px 0 0;max-width:34ch;font-size:14px;line-height:1.65;color:#6B766C;">Una rete diffusa di
         realtà associative e private per la conservazione concreta dei boschi di pregio del Piemonte.</p>
     </div>
     <div>
       <div
-          style="font-size:13px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#8A948B;margin-bottom:16px;">
+        style="font-size:13px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#8A948B;margin-bottom:16px;">
         Sezioni
       </div>
       <div style="display:flex;flex-direction:column;gap:10px;font-size:14px;">
@@ -283,19 +282,22 @@
     </div>
     <div>
       <div
-          style="font-size:13px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#8A948B;margin-bottom:16px;">
+        style="font-size:13px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#8A948B;margin-bottom:16px;">
         Contatti
       </div>
       <div class="flex flex-col gap-3 text-sm">
-        <div><strong style="color:#16281B;font-weight:600;">Terra, Boschi, Gente, Memorie</strong><br>339 4676949 · [email]</div>
+        <div><strong style="color:#16281B;font-weight:600;">Terra, Boschi, Gente, Memorie</strong><br>339 4676949 ·
+          [email]
+        </div>
         <div><strong style="color:#16281B;font-weight:600;">Pro Natura</strong><br>348 4528931 · [email]</div>
-        <div><strong style="color:#16281B;font-weight:600;">Legambiente Valtriversa</strong><br>335 7506324 · [email]</div>
+        <div><strong style="color:#16281B;font-weight:600;">Legambiente Valtriversa</strong><br>335 7506324 · [email]
+        </div>
       </div>
     </div>
   </div>
   <div style="border-top:1px solid #DEE6D8;">
     <div
-        style="max-width:1120px;margin:0 auto;padding:24px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:13px;color:#8A948B;">
+      style="max-width:1120px;margin:0 auto;padding:24px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:13px;color:#8A948B;">
       <span>© 2026 Rete dei Boschi Custoditi</span>
       <span>Piemonte · collina, pianura e montagna</span>
     </div>
