@@ -1,14 +1,16 @@
 <!-- section.svelte -->
 <script lang="ts">
   import {cn} from "$lib/utils";
-  import type {HTMLAttributes} from "svelte/elements";
+  import type {ClassValue, HTMLAttributes} from "svelte/elements";
 
   let {
+    containerClass,
     class: className,
     variant = "default",
     children,
     ...restProps
   }: HTMLAttributes<HTMLElement> & {
+    containerClass?: ClassValue | undefined | null;
     variant?: "default" | "panel" | "tight" | "dark";
   } = $props();
 </script>
@@ -16,15 +18,17 @@
 <section
     data-variant={variant}
     class={cn(
-    "section-shell py-20",
+    "py-20",
     "data-[variant=tight]:[--section-py:--spacing(12)]",
     "data-[variant=panel]:bg-card",
     variant === "dark" && "dark bg-background",
-    className
+    containerClass
   )}
     {...restProps}
 >
-  {@render children?.()}
+  <div class={cn("section-shell", className)}>
+    {@render children?.()}
+  </div>
 </section>
 
 <style>
