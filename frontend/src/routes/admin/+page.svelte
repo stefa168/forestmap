@@ -19,7 +19,7 @@
   }
 </script>
 
-<div class="w-full flex flex-row justify-between">
+<div class="w-full flex flex-row justify-between items-center">
   <div>
     <h1 class="text-3xl">Associazioni anagrafate</h1>
     <h3 class="text-muted-foreground">Cliccare sul nome di un'associazione per visualizzare e modificare i dettagli</h3>
@@ -49,7 +49,7 @@
       </Dialog.Description>
     </Dialog.Header>
 
-
+    
 
     <Dialog.Footer>
       <Dialog.Close
