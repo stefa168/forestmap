@@ -3,7 +3,7 @@
     <module name="Forestmap" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="dev.stefa.forestmap.*" />
+        <option name="PATTERN" value="dev.stefa.forestmap.storage.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>

@@ -1,0 +1,7 @@
+[master.volume_growth]
+# https://github.com/seaweedfs/seaweedfs/wiki/Replication#the-meaning-of-replication-type
+copy_1 = 1      # replication 000 - no replication, just one copy
+copy_2 = 1      # 001 - replicate once on the same rack
+copy_3 = 1      # 010 - replicate once on a different rack in the same data center
+                # 100 - replicate once on a different data center
+copy_other = 1

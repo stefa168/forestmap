@@ -70,7 +70,7 @@
   </div>
 </Section>
 
-<Section id="chi-siamo" class="grid grid-cols-2 items-center gap-16 pt-10">
+<Section id="chi-siamo" class="grid grid-rows-2 md:grid-cols-2 items-center md:gap-16 pt-10">
   <div>
     <SectionHeader
       eyebrow="Chi siamo"
@@ -101,7 +101,7 @@
     lead="La carta fondativa della Rete: un decalogo di valori e indicazioni operative. Ne trovi qui i cardini."
   />
 
-  <div class="mt-12 grid grid-cols-2 gap-5">
+  <div class="mt-12 grid md:grid-cols-2 gap-5">
     {#each manifesto as m, idx}
       {@const index = idx < 10 ? '0' + (idx + 1) : (idx + 1)}
       <div class="rounded-xl border border-[#F3F7F0]/14 bg-[#F3F7F0]/3 p-7">
@@ -119,7 +119,7 @@
     heading="Nodi autonomi, un'unica strategia condivisa."
   />
 
-  <div class="mt-12 grid grid-cols-3 gap-6">
+  <div class="mt-12 grid md:grid-cols-3 gap-6">
     {#each howItWorks as elem, idx}
       {@const Icon = elem.icon}
       <div class="border border-[#DEE6D8] rounded-[16px] p-8 bg-white">

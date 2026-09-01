@@ -59,6 +59,33 @@
   </dependencyManagement>
 
   <dependencies>
+    <!-- Source: https://mvnrepository.com/artifact/software.amazon.awssdk/s3 -->
+    <dependency>
+      <groupId>software.amazon.awssdk</groupId>
+      <artifactId>s3</artifactId>
+      <version>2.43.1</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tika</groupId>
+      <artifactId>tika-core</artifactId>
+      <version>3.3.0</version>
+    </dependency>
+    <!-- Source: https://mvnrepository.com/artifact/app.photofox.vips-ffm/vips-ffm-core -->
+    <dependency>
+      <groupId>app.photofox.vips-ffm</groupId>
+      <artifactId>vips-ffm-core</artifactId>
+      <version>1.9.6</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <!-- https://github.com/cowtowncoder/java-uuid-generator -->
+    <dependency>
+      <groupId>com.fasterxml.uuid</groupId>
+      <artifactId>java-uuid-generator</artifactId>
+      <version>5.2.0</version>
+    </dependency>
+
     <!-- Geotools deps -->
     <dependency>
       <groupId>org.geotools</groupId>
@@ -77,6 +104,13 @@
       <artifactId>gt-wfs-ng</artifactId>
     </dependency>
 
+    <!-- Source: https://mvnrepository.com/artifact/app.photofox.vips-ffm/vips-ffm-core -->
+    <dependency>
+      <groupId>app.photofox.vips-ffm</groupId>
+      <artifactId>vips-ffm-core</artifactId>
+      <version>1.9.6</version>
+      <scope>compile</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.springframework.boot</groupId>

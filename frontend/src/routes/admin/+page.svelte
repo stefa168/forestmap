@@ -2,6 +2,8 @@
   import {getAssociation, getAssociationsNames} from './actions.remote';
 
   import {Button, buttonVariants} from "$lib/components/ui/button";
+  import ImageUpload from "./image-upload.svelte";
+
   import * as Dialog from "$lib/components/ui/dialog";
 
   let associations = await getAssociationsNames(); // todo spostare in un await block
@@ -39,6 +41,8 @@
     </li>
   {/each}
 </ul>
+
+<ImageUpload/>
 
 <Dialog.Root bind:open={editDialogOpen}>
   <Dialog.Content>

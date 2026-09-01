@@ -7,6 +7,10 @@ spring:
     username: postgres
     password: password
 
+  threads:
+    virtual:
+      enabled: true
+
   jpa:
     hibernate:
       ddl-auto: validate
@@ -23,9 +27,25 @@ spring:
 logging:
   level:
     dev.stefa.forestmap: debug
+    org.springframework.web: debug
     org.hibernate.sql: debug
     org.geotools.data.wfs: debug
     org.geotools.data.wfs.internal: debug
+
+app:
+  storage:
+    internal-endpoint: http://localhost:8333
+    public-endpoint: http://localhost:8333
+    region: "eu"
+    media-bucket: "asset"
+    quarantine-bucket: "quarantine"
+    app:
+      access-key: ${APP_ACCESS_KEY}
+      secret-key: ${APP_SECRET_KEY}
+    uploader:
+      access-key: ${UPLOADER_ACCESS_KEY}
+      secret-key: ${UPLOADER_SECRET_KEY}
+    presign-ttl: 5m
 
 ade:
   max-features: 10

@@ -1,0 +1,41 @@
+{
+  "identities": [
+    {
+      "name": "admin",
+      "credentials": [
+        {
+          "accessKey": "dev-admin-key",
+          "secretKey": "dev-admin-secret-change-me"
+        }
+      ],
+      "actions": ["Admin", "Read", "Write", "List", "Tagging"]
+    },
+    {
+      "name": "app",
+      "credentials": [
+        {
+          "accessKey": "dev-app-key",
+          "secretKey": "dev-app-secret-change-me"
+        }
+      ],
+      "actions": [
+        "Read:media",
+        "Write:media",
+        "List:media",
+        "Read:quarantine",
+        "Write:quarantine",
+        "List:quarantine"
+      ]
+    },
+    {
+      "name": "uploader",
+      "credentials": [
+        {
+          "accessKey": "dev-uploader-key",
+          "secretKey": "dev-uploader-secret-change-me"
+        }
+      ],
+      "actions": ["Write:quarantine"]
+    }
+  ]
+}
