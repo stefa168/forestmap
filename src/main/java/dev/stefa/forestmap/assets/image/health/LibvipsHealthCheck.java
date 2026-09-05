@@ -1,7 +1,9 @@
 package dev.stefa.forestmap.assets.image.health;
 
+import app.photofox.vipsffm.Vips;
 import app.photofox.vipsffm.VipsHelper;
 import jakarta.annotation.PostConstruct;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
@@ -13,6 +15,9 @@ public class LibvipsHealthCheck {
   // Bump if we start using libvips features that require a newer version
   static final int MIN_MAJOR = 8;
   static final int MIN_MINOR = 15;
+
+  @Getter
+  private boolean supportsHeif;
 
   @PostConstruct
   void verifyPresence() {
@@ -35,6 +40,15 @@ public class LibvipsHealthCheck {
 
     assertMinimumVersion(version);
     log.info("libvips available: {}", version);
+
+    Vips.run(arena -> {
+      boolean canReadHeif  = VipsHelper.type_find(arena, "VipsOperation", "heifload") != 0;
+      boolean canWriteHeif = VipsHelper.type_find(arena, "VipsOperation", "heifsave") != 0;
+
+//      if(!canReadHeif || !canWriteHeif)
+//        throw new LibvipsUnavailableException("Bundled vips version doesn't support heif read (%b) or write (%b)".formatted(canReadHeif, canWriteHeif));
+      supportsHeif = canReadHeif && canWriteHeif;
+    });
   }
 
   private static void assertMinimumVersion(String version) {
