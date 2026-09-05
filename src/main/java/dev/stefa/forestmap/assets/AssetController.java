@@ -6,7 +6,6 @@ import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -20,10 +19,8 @@ import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.time.Instant;
 import java.util.UUID;
 
 import static software.amazon.awssdk.core.sync.RequestBody.fromBytes;
@@ -33,35 +30,10 @@ import static software.amazon.awssdk.core.sync.RequestBody.fromBytes;
 @RestController
 @RequestMapping("/api/assets")
 public class AssetController {
-  private final ImageRepository repository;
-
   private final S3Client s3;
   private final S3Presigner presigner;
   private final StorageProperties props;
   private final AssetRepository assetRepository;
-
-  @GetMapping("/{id}")
-  public ResponseEntity<byte[]> get(@PathVariable long id) {
-    return repository.findById(id)
-        .map(image -> ResponseEntity.ok()
-            .contentType(MediaType.parseMediaType(image.getContentType()))
-            .body(image.getData())
-        )
-        .orElse(ResponseEntity.notFound().build());
-  }
-
-  @PostMapping
-  public ResponseEntity<Long> upload(@RequestParam MultipartFile file,
-                                     @RequestParam Long ownerId) throws IOException {
-    var b = Image.builder()
-        .contentType(file.getContentType())
-        .filename(file.getOriginalFilename())
-        .data(file.getBytes())
-        .ownerId(ownerId)
-        .uploadedAt(Instant.now());
-
-    return ResponseEntity.ok(repository.save(b.build()).getId());
-  }
 
   // todo spostare in AssetService
   public Asset newPending(FileMeta meta) {

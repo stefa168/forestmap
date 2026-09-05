@@ -1,6 +1,5 @@
 package dev.stefa.forestmap.association;
 
-import dev.stefa.forestmap.assets.ImageRepository;
 import dev.stefa.forestmap.association.Dto.AssociationName;
 import dev.stefa.forestmap.association.Dto.PatchAssociationRequest;
 import lombok.AllArgsConstructor;
@@ -14,7 +13,7 @@ import java.util.Optional;
 @Service
 public class AssociationService {
   private final AssociationRepository associationRepository;
-  private final ImageRepository imageRepository;
+//  private final ImageRepository imageRepository;
 
   public boolean patch(Long id, PatchAssociationRequest request) {
     return associationRepository.findById(id)
@@ -23,9 +22,10 @@ public class AssociationService {
             association.setName(request.name());
 
           if (request.logoId() != null) {
-            if (!imageRepository.existsById(request.logoId())) {
+            // todo usare l'assetService
+/*            if (!imageRepository.existsById(request.logoId())) {
               throw new IllegalArgumentException("Referenced image does not exist");
-            }
+            }*/
             association.setLogoId(request.logoId());
           }
 
